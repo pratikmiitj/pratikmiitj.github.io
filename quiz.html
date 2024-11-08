@@ -1,0 +1,21 @@
+<html>
+<head>
+<script>
+   document.querySelector('iframe').onload = function () {
+      var iframeDoc = document.querySelector('iframe').contentWindow.document;
+      iframeDoc.addEventListener('copy', function(e) {
+         e.preventDefault();
+      });
+      iframeDoc.addEventListener('cut', function(e) {
+         e.preventDefault();
+      });
+      iframeDoc.addEventListener('paste', function(e) {
+         e.preventDefault();
+      });
+   };
+</script>
+</head>
+<body>
+<iframe src="https://forms.gle/fBcQ2nV4TTPYhTcPA" width="640" height="480"></iframe>
+</body>
+</html>
