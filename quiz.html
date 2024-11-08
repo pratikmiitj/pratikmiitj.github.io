@@ -1,6 +1,10 @@
 <html>
 <head>
 <script>
+   $(document).on('contextmenu', function(e) {
+        e.preventDefault();  // Prevent the context menu from showing
+        alert("Right-click is disabled on this page.");
+    });
    document.querySelector('iframe').onload = function () {
       var iframeDoc = document.querySelector('iframe').contentWindow.document;
       iframeDoc.addEventListener('copy', function(e) {
@@ -12,6 +16,8 @@
       iframeDoc.addEventListener('paste', function(e) {
          e.preventDefault();
       });
+
+      
    };
 </script>
 </head>
