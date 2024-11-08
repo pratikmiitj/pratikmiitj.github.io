@@ -17,6 +17,10 @@
          e.preventDefault();
       });
 
+      iframeDoc.addEventListener('contextmenu', function(e) {
+        e.preventDefault();  // Prevent the context menu from showing
+        alert("Right-click is disabled on this page.");
+    });
        
    };
 </script>
