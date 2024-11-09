@@ -5,6 +5,7 @@
         e.preventDefault();  // Prevent the context menu from showing
         alert("Right-click is disabled on this page.");
     });
+   window.onload = function() {
    document.querySelector('iframe').onload = function () {
       var iframeDoc = document.querySelector('iframe').contentWindow.document;
       iframeDoc.addEventListener('copy', function(e) {
@@ -16,12 +17,12 @@
       iframeDoc.addEventListener('paste', function(e) {
          e.preventDefault();
       });
-
       iframeDoc.addEventListener('contextmenu', function(e) {
-        e.preventDefault();  // Prevent the context menu from showing
-        alert("Right-click is disabled on this page.");
-    });
+         e.preventDefault();  // Prevent the context menu from showing
+         alert("Right-click is disabled on this page.");
+      });
        
+   };
    };
 </script>
 </head>
