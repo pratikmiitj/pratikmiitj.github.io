@@ -8,6 +8,11 @@
    window.onload = function() {
    document.querySelector('iframe').onload = function () {
       var iframeDoc = document.querySelector('iframe').contentWindow.document;
+
+       iframeDoc.addEventListener('contextmenu', function(e) {
+         e.preventDefault();  // Prevent the context menu from showing
+         alert("Right-click is disabled on this page.");
+      });
       iframeDoc.addEventListener('copy', function(e) {
          e.preventDefault();
       });
@@ -17,10 +22,7 @@
       iframeDoc.addEventListener('paste', function(e) {
          e.preventDefault();
       });
-      iframeDoc.addEventListener('contextmenu', function(e) {
-         e.preventDefault();  // Prevent the context menu from showing
-         alert("Right-click is disabled on this page.");
-      });
+     
        
    };
    };
