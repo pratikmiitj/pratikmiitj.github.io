@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Filter Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    canvas {
+      border: 1px solid #ddd;
+      margin-top: 20px;
+    }
+    input[type="file"], textarea, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Custom Filter Application</h1>
+  <input type="file" id="imageInput" accept="image/*">
+  <br>
+  <textarea id="filterMatrix" rows="4" placeholder="Enter a 3x3 filter matrix, e.g.:
+1 0 -1
+1 0 -1
+1 0 -1"></textarea>
+  <br>
+  <button id="applyCustomFilter">Apply Custom Filter</button>
+  <br>
+  <canvas id="imageCanvas"></canvas>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const filterMatrixInput = document.getElementById('filterMatrix');
+    const applyCustomFilterButton = document.getElementById('applyCustomFilter');
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let image = new Image();
+
+    // Load the image into the canvas
+    imageInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          image.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    image.onload = () => {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.drawImage(image, 0, 0);
+    };
+
+    // Parse the filter matrix from user input
+    function parseFilterMatrix(input) {
+      try {
+        return input.trim().split('\n').map(row => row.trim().split(/\s+/).map(Number));
+      } catch {
+        alert("Invalid filter matrix. Ensure it's a 3x3 matrix of numbers.");
+        return null;
+      }
+    }
+
+    // Apply convolution with the custom filter
+    function applyFilter(filter) {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const width = imageData.width;
+      const height = imageData.height;
+
+      const outputData = new Uint8ClampedArray(data);
+
+      const kernelSize = filter.length; // Assuming square filter
+      const halfSize = Math.floor(kernelSize / 2);
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          let r = 0, g = 0, b = 0;
+
+          for (let ky = -halfSize; ky <= halfSize; ky++) {
+            for (let kx = -halfSize; kx <= halfSize; kx++) {
+              const iy = y + ky;
+              const ix = x + kx;
+              if (iy >= 0 && iy < height && ix >= 0 && ix < width) {
+                const index = (iy * width + ix) * 4;
+                const weight = filter[ky + halfSize][kx + halfSize];
+
+                r += data[index] * weight;
+                g += data[index + 1] * weight;
+                b += data[index + 2] * weight;
+              }
+            }
+          }
+
+          const index = (y * width + x) * 4;
+          outputData[index] = Math.min(Math.max(r, 0), 255);
+          outputData[index + 1] = Math.min(Math.max(g, 0), 255);
+          outputData[index + 2] = Math.min(Math.max(b, 0), 255);
+          outputData[index + 3] = data[index + 3]; // Preserve alpha
+        }
+      }
+
+      ctx.putImageData(new ImageData(outputData, width, height));
+    }
+
+    // Apply custom filter on button click
+    applyCustomFilterButton.addEventListener('click', () => {
+      const filter = parseFilterMatrix(filterMatrixInput.value);
+      if (filter && filter.length === 3 && filter.every(row => row.length === 3)) {
+        applyFilter(filter);
+      } else {
+        alert("Invalid filter matrix. Ensure it's a 3x3 matrix of numbers.");
+      }
+    });
+  </script>
+</body>
+</html>
