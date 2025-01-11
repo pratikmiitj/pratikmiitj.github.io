@@ -20,6 +20,10 @@
       font-size: 16px;
       width: 80%;
     }
+    #resultImage {
+      margin-top: 20px;
+      border: 1px solid #ddd;
+    }
   </style>
 </head>
 <body>
@@ -34,6 +38,9 @@
   <button id="applyCustomFilter">Apply Custom Filter</button>
   <br>
   <canvas id="imageCanvas"></canvas>
+  <br>
+  <h2>Filtered Image:</h2>
+  <img id="resultImage" alt="Filtered Result" />
 
   <script>
     const imageInput = document.getElementById('imageInput');
@@ -41,6 +48,7 @@
     const applyCustomFilterButton = document.getElementById('applyCustomFilter');
     const canvas = document.getElementById('imageCanvas');
     const ctx = canvas.getContext('2d');
+    const resultImage = document.getElementById('resultImage');
 
     let image = new Image();
 
@@ -114,11 +122,15 @@
       ctx.putImageData(new ImageData(outputData, width, height));
     }
 
-    // Apply custom filter on button click
+    // Apply custom filter and display the result as an image
     applyCustomFilterButton.addEventListener('click', () => {
       const filter = parseFilterMatrix(filterMatrixInput.value);
       if (filter && filter.length === 3 && filter.every(row => row.length === 3)) {
         applyFilter(filter);
+
+        // Generate a data URL from the canvas and display it in the img tag
+        const dataURL = canvas.toDataURL();
+        resultImage.src = dataURL;
       } else {
         alert("Invalid filter matrix. Ensure it's a 3x3 matrix of numbers.");
       }
